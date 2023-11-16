@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import personService from "./services/persons";
+import "./index.css";
 
 const Contact = ({ contact, onDeleteContact }) => (
   <div>
@@ -10,7 +11,6 @@ const Contact = ({ contact, onDeleteContact }) => (
 );
 
 const ContactList = ({ contacts, onDeleteContact }) => {
-  console.log("ContactList: Contacts : ", contacts);
   return contacts.map((contact) => (
     <Contact
       key={contact.id}
@@ -58,12 +58,24 @@ const NewContactForm = ({
   );
 };
 
+const Notification = ({ message, error }) => {
+  if (message == null) {
+    return null;
+  }
+  if (error) {
+    return <div className="error">{message}</div>;
+  }
+  return <div className="notification">{message}</div>;
+};
+
 const App = () => {
   const initialId = 1;
   const [persons, setPersons] = useState([]);
   const [filterQuery, setFilterQuery] = useState("");
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     personService.getAll().then((response) => {
@@ -87,6 +99,14 @@ const App = () => {
   const contactExists = (contact) =>
     persons.find((element) => element.name == contact.name);
 
+  const displayAndDisappearNotification = (msg, error) => {
+    setMessage(msg);
+    setError(error);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
+  };
+
   const handleAddClick = (event) => {
     event.preventDefault();
     const newContact = {
@@ -100,13 +120,32 @@ const App = () => {
           `${newContact.name} is already added to phonebook, replace the old one with a new one?`
         )
       ) {
-        personService.update(exists.id, newContact).then((response) => {
-          setPersons(
-            persons.map((person) => {
-              return person.id != response.id ? person : response;
-            })
-          );
-        });
+        personService
+          .update(exists.id, newContact)
+          .then((response) => {
+            setPersons(
+              persons.map((person) => {
+                return person.id != response.id ? person : response;
+              })
+            );
+            setNewName("");
+            setNewNumber("");
+            displayAndDisappearNotification(
+              `Changed ${newContact.name} number to ${newContact.number}`,
+              false
+            );
+          })
+          .catch((error) => {
+            setPersons(
+              persons.filter((person) => person.name != newContact.name)
+            );
+            setNewName("");
+            setNewNumber("");
+            displayAndDisappearNotification(
+              `Information about ${newContact.name} has already been removed from server`,
+              true
+            );
+          });
       }
     } else {
       personService.createPerson(newContact).then((response) => {
@@ -114,6 +153,7 @@ const App = () => {
         setNewName("");
         setNewNumber("");
       });
+      displayAndDisappearNotification(`Added ${newContact.name}`, false);
     }
   };
 
@@ -128,6 +168,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification error={error} message={message} />
       <FilterForm query={filterQuery} setQuery={setFilterQuery} />
       <h2>Add New Note</h2>
       <NewContactForm

@@ -1,9 +1,19 @@
 {
   "persons": [
     {
-      "name": "Kassi",
-      "number": "908",
-      "id": 2
+      "name": "Vero",
+      "number": "123",
+      "id": 3
+    },
+    {
+      "name": "Step",
+      "number": "34",
+      "id": 5
+    },
+    {
+      "name": "Magi",
+      "number": "111",
+      "id": 6
     }
   ]
 }
