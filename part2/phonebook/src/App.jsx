@@ -1,16 +1,22 @@
 import { useState } from "react";
-import axios from "axios";
 import { useEffect } from "react";
+import personService from "./services/persons";
 
-const Contact = ({ contact }) => (
+const Contact = ({ contact, onDeleteContact }) => (
   <div>
     {contact.name} {contact.number}
+    <button onClick={onDeleteContact}>Delete</button>
   </div>
 );
 
-const ContactList = ({ contacts }) => {
+const ContactList = ({ contacts, onDeleteContact }) => {
+  console.log("ContactList: Contacts : ", contacts);
   return contacts.map((contact) => (
-    <Contact key={contact.id} contact={contact} />
+    <Contact
+      key={contact.id}
+      contact={contact}
+      onDeleteContact={() => onDeleteContact(contact)}
+    />
   ));
 };
 
@@ -60,44 +66,54 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
 
   useEffect(() => {
-    console.log("Effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log(response);
-      setPersons(response.data);
+    personService.getAll().then((response) => {
+      setPersons(response);
     });
   }, []);
 
-  const filterContacts = () =>
-    persons.filter((contact) => {
+  const deleteContact = (contact) => {
+    if (window.confirm(`Delete ${contact.name}?`)) {
+      const response = personService.deletePerson(contact.id);
+      setPersons(persons.filter((person) => person.id != contact.id));
+    }
+  };
+
+  const filterContacts = () => {
+    return persons.filter((contact) => {
       return contact.name.toLowerCase().includes(filterQuery.toLowerCase());
     });
+  };
 
   const contactExists = (contact) =>
     persons.find((element) => element.name == contact.name);
 
-  const getNextId = () => {
-    const maxId = persons.reduce((max, nextPerson) => {
-      if (nextPerson.id > max) {
-        return nextPerson.id;
-      }
-      return max;
-    }, initialId);
-    return maxId + 1;
-  };
-
   const handleAddClick = (event) => {
     event.preventDefault();
     const newContact = {
-      id: getNextId(),
       name: newName,
       number: newNumber,
     };
-    if (contactExists(newContact)) {
-      alert(`${newContact.name} is already added to phonebook`);
+    const exists = contactExists(newContact);
+    if (exists) {
+      if (
+        window.confirm(
+          `${newContact.name} is already added to phonebook, replace the old one with a new one?`
+        )
+      ) {
+        personService.update(exists.id, newContact).then((response) => {
+          setPersons(
+            persons.map((person) => {
+              return person.id != response.id ? person : response;
+            })
+          );
+        });
+      }
     } else {
-      setPersons(persons.concat(newContact));
-      setNewName("");
-      setNewNumber("");
+      personService.createPerson(newContact).then((response) => {
+        setPersons(persons.concat(response));
+        setNewName("");
+        setNewNumber("");
+      });
     }
   };
 
@@ -122,7 +138,10 @@ const App = () => {
         newNumber={newNumber}
       />
       <h2>Numbers</h2>
-      <ContactList contacts={filterContacts()} />
+      <ContactList
+        onDeleteContact={deleteContact}
+        contacts={filterContacts()}
+      />
     </div>
   );
 };
