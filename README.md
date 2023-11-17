@@ -20,3 +20,12 @@ This repository contains my submissions to the Full Stack Open Course.
 - A more complex state, debugging React apps
 
 [View exercises folder](/part1/)
+
+## [Part 2: Introduction to React](https://fullstackopen.com/en/part2)
+- Rendering a collection, modules
+- Forms
+- Getting data from server
+- Altering data in server
+- Adding styles to React app
+
+[View exercises folder](/part2/)
