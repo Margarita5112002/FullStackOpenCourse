@@ -78,9 +78,14 @@ const App = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    personService.getAll().then((response) => {
-      setPersons(response);
-    });
+    personService
+      .getAll()
+      .then((response) => {
+        setPersons(response);
+      })
+      .catch((error) => {
+        displayAndDisappearNotification("Connection Error", true);
+      });
   }, []);
 
   const deleteContact = (contact) => {
@@ -148,12 +153,17 @@ const App = () => {
           });
       }
     } else {
-      personService.createPerson(newContact).then((response) => {
-        setPersons(persons.concat(response));
-        setNewName("");
-        setNewNumber("");
-      });
-      displayAndDisappearNotification(`Added ${newContact.name}`, false);
+      personService
+        .createPerson(newContact)
+        .then((response) => {
+          setPersons(persons.concat(response));
+          setNewName("");
+          setNewNumber("");
+          displayAndDisappearNotification(`Added ${newContact.name}`, false);
+        })
+        .catch((error) => {
+          displayAndDisappearNotification(`Connection Error`, true);
+        });
     }
   };
 
