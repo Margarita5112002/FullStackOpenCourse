@@ -35,6 +35,17 @@ app.get('/info', (request, response) => {
     <p>${date.toDateString()} ${date.toTimeString()}</p>`)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const person = persons.find(p => p.id == id)
+    if (person){
+        response.json(person)
+    } else {
+        response.statusMessage = `Can't find person with id ${id}`
+        response.status(404).end()
+    }
+})
+
 const PORT = 3001
 
 app.listen(PORT, () => {
