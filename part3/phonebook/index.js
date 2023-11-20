@@ -2,7 +2,6 @@ const express = require('express')
 const app = express()
 var morgan = require('morgan')
 
-app.use(morgan("tiny"))
 app.use(express.json())
 
 let persons = [
@@ -34,7 +33,7 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/info', (request, response) => {
     const date = new Date()
-    response.send(`<p>Phonebook has info for ${persons.length} persons</p>
+    response.send(`<p>Phonebook has info for ${persons.length} people</p>
     <br/>
     <p>${date.toDateString()} ${date.toTimeString()}</p>`)
 })
@@ -64,8 +63,14 @@ const getNewId = () => {
     return newId
 }
 
+morgan.token("body", (req, res) => {
+    return JSON.stringify(req.body)
+})
+
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
+
 app.post('/api/persons', (request, response) => {
-    const person = request.body
+    const person = { ...request.body }
 
     if (!person.name) {
         return response.status(400).json({
@@ -73,7 +78,7 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    if (persons.find(p => p.name == person.name)){
+    if (persons.find(p => p.name == person.name)) {
         return response.status(400).json({
             error: "name must be unique"
         })
