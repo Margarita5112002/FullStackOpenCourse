@@ -1,7 +1,8 @@
-const { response } = require('express')
 const express = require('express')
 const app = express()
+var morgan = require('morgan')
 
+app.use(morgan("tiny"))
 app.use(express.json())
 
 let persons = [
