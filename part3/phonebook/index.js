@@ -62,14 +62,6 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
-const getNewId = () => {
-    let newId = 1
-    do {
-        newId = Math.floor(Math.random() * (100_000_000 - 1) + 1);
-    } while (persons.find(p => p.id == newId))
-    return newId
-}
-
 morgan.token("body", (req, res) => {
     return JSON.stringify(req.body)
 })
