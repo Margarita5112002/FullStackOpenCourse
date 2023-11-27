@@ -161,7 +161,7 @@ const App = () => {
           displayAndDisappearNotification(`Added ${newContact.name}`, false);
         })
         .catch((error) => {
-          displayAndDisappearNotification(`Connection Error`, true);
+          displayAndDisappearNotification(error.response.data.error, true);
         });
     }
   };
