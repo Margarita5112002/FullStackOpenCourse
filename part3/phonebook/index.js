@@ -15,51 +15,33 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms :b
 
 app.use(cors())
 
-let persons = [
-    {
-        "id": 1,
-        "name": "Arto Hellas",
-        "number": "040-123456"
-    },
-    {
-        "id": 2,
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523"
-    },
-    {
-        "id": 3,
-        "name": "Dan Abramov",
-        "number": "12-43-234345"
-    },
-    {
-        "id": 4,
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
-    }
-]
-
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, error) => {
     Person.find({}).then(result => {
         response.json(result)
-    })
+    }).catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
-    const date = new Date()
-    response.send(`<p>Phonebook has info for ${persons.length} people</p>
-    <br/>
-    <p>${date.toDateString()} ${date.toTimeString()}</p>`)
+app.get('/info', (request, response, error) => {
+    Person.count({})
+        .then(count => {
+            const date = new Date()
+            response.send(`<p>Phonebook has info for ${count} people</p>
+        <br/>
+        <p>${date.toDateString()} ${date.toTimeString()}</p>`)
+        })
+        .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(p => p.id == id)
-    if (person) {
-        response.json(person)
-    } else {
-        response.statusMessage = `Can't find person with id ${id}`
-        response.status(404).end()
-    }
+app.get('/api/persons/:id', (request, response, next) => {
+    const id = request.params.id
+    Person.findById(id).then(person => {
+        if (person) {
+            response.json(person)
+        } else {
+            response.statusMessage = `Can't find person with id ${id}`
+            response.status(404).end()
+        }
+    }).catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
