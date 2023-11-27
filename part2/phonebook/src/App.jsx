@@ -69,7 +69,6 @@ const Notification = ({ message, error }) => {
 };
 
 const App = () => {
-  const initialId = 1;
   const [persons, setPersons] = useState([]);
   const [filterQuery, setFilterQuery] = useState("");
   const [newName, setNewName] = useState("");
@@ -90,7 +89,7 @@ const App = () => {
 
   const deleteContact = (contact) => {
     if (window.confirm(`Delete ${contact.name}?`)) {
-      const response = personService.deletePerson(contact.id);
+      personService.deletePerson(contact.id);
       setPersons(persons.filter((person) => person.id != contact.id));
     }
   };

@@ -5,9 +5,9 @@ const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
 
-app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json())
+app.use(cors())
 
 let persons = [
     {
@@ -57,9 +57,18 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(p => p.id != id)
-    response.status(204).end()
+    const id = request.params.id
+    Person.findByIdAndDelete(id).then(result => {
+        if (result) {
+            response.status(204).end()
+        } else {
+            response.status(404).end()
+        }
+    }).catch(error => {
+        console.log("Error Deleting")
+        console.log(error)
+        response.status(400).send({error: "malformatted id"})
+    })
 })
 
 morgan.token("body", (req, res) => {
