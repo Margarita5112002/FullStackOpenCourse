@@ -7,6 +7,12 @@ const Person = require('./models/person')
 
 app.use(express.static('dist'))
 app.use(express.json())
+morgan.token("body", (req, res) => {
+    return req.method === 'POST' ? JSON.stringify(req.body) : ""
+})
+
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
+
 app.use(cors())
 
 let persons = [
@@ -56,7 +62,7 @@ app.get('/api/persons/:id', (request, response) => {
     }
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
     Person.findByIdAndDelete(id).then(result => {
         if (result) {
@@ -64,18 +70,8 @@ app.delete('/api/persons/:id', (request, response) => {
         } else {
             response.status(404).end()
         }
-    }).catch(error => {
-        console.log("Error Deleting")
-        console.log(error)
-        response.status(400).send({error: "malformatted id"})
-    })
+    }).catch(error => next(error))
 })
-
-morgan.token("body", (req, res) => {
-    return JSON.stringify(req.body)
-})
-
-app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
 
 app.post('/api/persons', (request, response) => {
     const person = { ...request.body }
@@ -106,6 +102,22 @@ app.post('/api/persons', (request, response) => {
     })
 
 })
+
+const unknownEndpoint = (req, res) => {
+    res.status(404).send({error: "unknown endpoint"})
+}
+
+app.use(unknownEndpoint)
+
+const errorHandler = (error, req, res, next) => {
+    console.log(error)
+    if (error.name === "CastError"){
+        return res.status(400).send({error: "malformatted id"})
+    }
+    next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 
