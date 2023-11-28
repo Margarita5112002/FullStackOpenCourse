@@ -7,21 +7,21 @@ const Person = require('./models/person')
 
 app.use(express.static('dist'))
 app.use(express.json())
-morgan.token("body", (req, res) => {
-    return req.method === 'POST' ? JSON.stringify(req.body) : ""
+morgan.token('body', (req, res) => {
+    return req.method === 'POST' ? JSON.stringify(req.body) : ''
 })
 
-app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.use(cors())
 
-app.get('/api/persons', (request, response, error) => {
+app.get('/api/persons', (request, response, next) => {
     Person.find({}).then(result => {
         response.json(result)
     }).catch(error => next(error))
 })
 
-app.get('/info', (request, response, error) => {
+app.get('/info', (request, response, next) => {
     Person.count({})
         .then(count => {
             const date = new Date()
@@ -65,13 +65,13 @@ app.post('/api/persons', (request, response, next) => {
 
 })
 
-app.put("/api/persons/:id", (req, res, next) => {
+app.put('/api/persons/:id', (req, res, next) => {
     const body = req.body
     const person = {
         name: body.name,
         number: body.number
     }
-    Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true, context: "query" })
+    Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true, context: 'query' })
         .then(updatedPerson => {
             if (updatedPerson){
                 res.json(updatedPerson)
@@ -83,16 +83,16 @@ app.put("/api/persons/:id", (req, res, next) => {
 })
 
 const unknownEndpoint = (req, res) => {
-    res.status(404).send({ error: "unknown endpoint" })
+    res.status(404).send({ error: 'unknown endpoint' })
 }
 
 app.use(unknownEndpoint)
 
 const errorHandler = (error, req, res, next) => {
     console.log(error)
-    if (error.name === "CastError") {
-        return res.status(400).send({ error: "malformatted id" })
-    } else if (error.name === "ValidationError") {
+    if (error.name === 'CastError') {
+        return res.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
         return res.status(400).json({ error: error.message })
     }
     next(error)
