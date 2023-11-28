@@ -140,15 +140,19 @@ const App = () => {
             );
           })
           .catch((error) => {
-            setPersons(
-              persons.filter((person) => person.name != newContact.name)
-            );
-            setNewName("");
-            setNewNumber("");
-            displayAndDisappearNotification(
-              `Information about ${newContact.name} has already been removed from server`,
-              true
-            );
+            if (error.response.status === 404) {
+              setPersons(
+                persons.filter((person) => person.name != newContact.name)
+              );
+              setNewName("");
+              setNewNumber("");
+              displayAndDisappearNotification(
+                `Information about ${newContact.name} has already been removed from server`,
+                true
+              );
+            } else {
+              displayAndDisappearNotification(error.response.data.error, true);
+            }
           });
       }
     } else {
