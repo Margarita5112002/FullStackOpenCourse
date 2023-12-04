@@ -96,7 +96,7 @@ describe('favorite blog', () => {
         const res = listHelper.favoriteBlog(listWithOneBlog)
         expect(res).toEqual({
             title: 'Go To Statement Considered Harmful',
-            author: 'Edsger W. Dijkstra', 
+            author: 'Edsger W. Dijkstra',
             likes: 5
         })
     })
@@ -120,7 +120,7 @@ describe('most blogs', () => {
     test('when list has only one blog, equals that blog\'s author', () => {
         const res = listHelper.mostBlogs(listWithOneBlog)
         expect(res).toEqual({
-            author: 'Edsger W. Dijkstra', 
+            author: 'Edsger W. Dijkstra',
             blogs: 1
         })
     })
@@ -130,6 +130,29 @@ describe('most blogs', () => {
         expect(res).toEqual({
             author: "Robert C. Martin",
             blogs: 3
+        })
+    })
+})
+
+describe('most likes', () => {
+    test('of empty list is null', () => {
+        const res = listHelper.mostLikes([])
+        expect(res).toEqual(null)
+    })
+
+    test('when list has only one blog, equals that blog\'s author', () => {
+        const res = listHelper.mostLikes(listWithOneBlog)
+        expect(res).toEqual({
+            author: 'Edsger W. Dijkstra',
+            likes: 5
+        })
+    })
+
+    test('of a bigger list, it gets the author with the most likes', () => {
+        const res = listHelper.mostLikes(listOfBlogs)
+        expect(res).toEqual({
+            author: "Edsger W. Dijkstra",
+            likes: 17
         })
     })
 })
