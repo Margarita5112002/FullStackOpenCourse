@@ -1,4 +1,4 @@
-const {PORT, MONGODB_URI} = require('./utils/config')
+const { PORT, MONGODB_URI } = require('./utils/config')
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -10,12 +10,12 @@ const middleware = require('./utils/middleware')
 logger.info('connecting to', MONGODB_URI)
 
 mongoose.connect(MONGODB_URI)
-    .then(() => {
-        logger.info('connected to MongoDB')
-    })
-    .catch(error => {
-        logger.error('error connecting to MongoDB:', error.message)
-    })
+	.then(() => {
+		logger.info('connected to MongoDB')
+	})
+	.catch(error => {
+		logger.error('error connecting to MongoDB:', error.message)
+	})
 
 app.use(cors())
 app.use(express.json())
