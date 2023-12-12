@@ -5,17 +5,16 @@ const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
-const { pick } = require('lodash')
-
-beforeEach(async () => {
-	await Blog.deleteMany({})
-	for(let blog of helper.initialBlogs){
-		let blogObject = new Blog(blog)
-		await blogObject.save()
-	}
-})
 
 describe('when there is initially some blogs saved', () => {
+	beforeEach(async () => {
+		await Blog.deleteMany({})
+		for(let blog of helper.initialBlogs){
+			let blogObject = new Blog(blog)
+			await blogObject.save()
+		}
+	})
+
 	test('blogs are returned as json', async () => {
 		await api
 			.get('/api/blogs')
