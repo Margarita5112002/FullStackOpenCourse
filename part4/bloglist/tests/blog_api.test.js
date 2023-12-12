@@ -123,6 +123,31 @@ describe('when there is initially some blogs saved', () => {
 				.expect(404)
 		})
 	})
+	describe('update a blog', () => {
+		test('a blog can be updated sucessfully', async () => {
+			const blogsAtStart = await helper.blogsInDb()
+			const blogToUpdate = blogsAtStart[0]
+			const blogUpdated = {
+				title: 'Update title',
+				author: 'Tom',
+				url: 'http://www.update-blog.com',
+				likes: 100
+			}
+			const response = await api
+				.put(`/api/blogs/${blogToUpdate.id}`)
+				.send(blogUpdated)
+				.expect(200)
+			expect(response.body.title).toBe(blogUpdated.title)
+			expect(response.body.author).toBe(blogUpdated.author)
+			expect(response.body.url).toBe(blogUpdated.url)
+			expect(response.body.likes).toBe(blogUpdated.likes)
+			const updatedBlogInDb = await Blog.findById(blogToUpdate.id)
+			expect(updatedBlogInDb.title).toBe(blogUpdated.title)
+			expect(updatedBlogInDb.author).toBe(blogUpdated.author)
+			expect(updatedBlogInDb.url).toBe(blogUpdated.url)
+			expect(updatedBlogInDb.likes).toBe(blogUpdated.likes)
+		})
+	})
 })
 
 afterAll(async () => {
