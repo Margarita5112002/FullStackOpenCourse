@@ -1,9 +1,18 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const userSchema = new mongoose.Schema({
-	username: String,
+	username: {
+		type: String,
+		minLength: [3, 'username must be at least 3 characters long'],
+		required: [true, 'username is required'],
+		unique: [true, 'username is already taken']
+	},
 	name: String,
-	passwordHash: String,
+	passwordHash: {
+		type: String,
+		required: [true, 'password is required']
+	},
 	blogs: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
@@ -11,6 +20,8 @@ const userSchema = new mongoose.Schema({
 		}
 	]
 })
+
+userSchema.plugin(uniqueValidator, { message: 'username is already taken' })
 
 userSchema.set('toJSON', {
 	transform: (document, returnedObject) => {
