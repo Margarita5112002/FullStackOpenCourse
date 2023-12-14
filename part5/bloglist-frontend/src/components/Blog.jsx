@@ -9,9 +9,7 @@ const Blog = ({ blog }) => {
 	const toggleVisibility = () => {
 		setVisible(!visible)
 	}
-
-	console.log(blog)
-
+	
 	return (
 		<div className="blog">
 			{blog.title} {blog.author}
