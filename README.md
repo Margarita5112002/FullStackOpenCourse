@@ -37,3 +37,11 @@ This repository contains my submissions to the Full Stack Open Course.
 - Validation and ESLint
 
 [View exercises folder](/part3/)
+
+## [Part 4: Testing Express servers, user administration](https://fullstackopen.com/en/part4)
+- Structure of backend application, introduction to testing
+- Testing the backend
+- User administration
+- Token authentication
+
+[View exercises folder](/part4/)
