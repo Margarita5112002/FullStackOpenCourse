@@ -13,6 +13,10 @@ blogRouter.post('/', async (request, response) => {
 	const body = request.body
 	const user = request.user
 
+	if (!user){
+		return response.status(401).json({ error: 'not authorized' })
+	}
+
 	const newBlog = {
 		title: body.title,
 		author: body.author,
@@ -36,7 +40,7 @@ blogRouter.delete('/:id', async (request, response) => {
 		return response.status(404).end()
 	}
 
-	if (blog.user.toString() !== user.id.toString()){
+	if (!(user && blog.user.toString() === user.id.toString())){
 		return response.status(401).send({
 			error: 'not authorized to delete this blog'
 		})

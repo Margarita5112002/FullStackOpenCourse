@@ -8,8 +8,10 @@ const helper = require('./test_helper')
 
 describe('when there is initially some blogs saved', () => {
 	beforeEach(async () => {
+		const userId = await helper.resetUsersToOneUserAndGetId()
 		await Blog.deleteMany({})
 		for(let blog of helper.initialBlogs){
+			blog.user = userId
 			let blogObject = new Blog(blog)
 			await blogObject.save()
 		}
@@ -34,6 +36,8 @@ describe('when there is initially some blogs saved', () => {
 
 	describe('addition of a new blog', () => {
 		test('a valid blog post can be added', async () => {
+			const token = await helper.getTokenForFirstUserInDb()
+
 			const newBlog = {
 				title: 'Example of blog',
 				author: 'Tom',
@@ -44,6 +48,7 @@ describe('when there is initially some blogs saved', () => {
 			await api
 				.post('/api/blogs')
 				.send(newBlog)
+				.set('Authorization', `bearer ${token}`)
 				.expect(201)
 				.expect('Content-Type', /application\/json/)
 
@@ -62,6 +67,8 @@ describe('when there is initially some blogs saved', () => {
 		})
 
 		test('if the likes property is missing in POST request, it will be 0', async () => {
+			const token = await helper.getTokenForFirstUserInDb()
+
 			const newBlog = {
 				title: 'Example of blog',
 				author: 'Tom',
@@ -71,12 +78,15 @@ describe('when there is initially some blogs saved', () => {
 			const response = await api
 				.post('/api/blogs')
 				.send(newBlog)
+				.set('Authorization', `bearer ${token}`)
 
 			expect(response.body.likes).toBeDefined()
 			expect(response.body.likes).toBe(0)
 		})
 
 		test('if title is missing in POST request, send status code 400', async () => {
+			const token = await helper.getTokenForFirstUserInDb()
+
 			const newBlog = {
 				author: 'Tom',
 				likes: 30,
@@ -86,10 +96,13 @@ describe('when there is initially some blogs saved', () => {
 			await api
 				.post('/api/blogs')
 				.send(newBlog)
+				.set('Authorization', `bearer ${token}`)
 				.expect(400)
 		})
 
 		test('if url is missing in POST request, send status code 400', async () => {
+			const token = await helper.getTokenForFirstUserInDb()
+
 			const newBlog = {
 				title: 'Example of blog',
 				author: 'Tom',
@@ -99,15 +112,31 @@ describe('when there is initially some blogs saved', () => {
 			await api
 				.post('/api/blogs')
 				.send(newBlog)
+				.set('Authorization', `bearer ${token}`)
 				.expect(400)
+		})
+		test('if authorization token is not provided, send statuscode 401', async () => {
+			const newBlog = {
+				title: 'Example of blog',
+				author: 'Tom',
+				url: 'www.a.com',
+				likes: 0
+			}
+			await api
+				.post('/api/blogs')
+				.send(newBlog)
+				.expect(401)
+				.expect('Content-Type', /application\/json/)
 		})
 	})
 	describe('deletion of a blog', () => {
 		test('a blog can be deleted sucessfully', async () => {
+			const token = await helper.getTokenForFirstUserInDb()
 			const blogsAtStart = await helper.blogsInDb()
 			const blogToDelete = blogsAtStart[0]
 			await api
 				.delete(`/api/blogs/${blogToDelete.id}`)
+				.set('Authorization', `bearer ${token}`)
 				.expect(204)
 			const blogsAfter = await helper.blogsInDb()
 			expect(blogsAfter).toHaveLength(blogsAtStart.length - 1)
@@ -116,10 +145,24 @@ describe('when there is initially some blogs saved', () => {
 		})
 
 		test('send 404 status code, if blog id does not exist', async () => {
+			const token = await helper.getTokenForFirstUserInDb()
 			const noExist = await helper.nonExistingId()
 			await api
 				.delete(`/api/blogs/${noExist}`)
+				.set('Authorization', `bearer ${token}`)
 				.expect(404)
+		})
+
+		test('deletion fails and send status 401 if authorization token is not provided', async () => {
+			const blogsAtStart = await helper.blogsInDb()
+			const blogToDeleteId = blogsAtStart[0].id
+			await api
+				.delete(`/api/blogs/${blogToDeleteId}`)
+				.expect(401)
+				.expect('Content-Type', /application\/json/)
+
+			const blogsAfter = await helper.blogsInDb()
+			expect(blogsAfter).toEqual(blogsAtStart)
 		})
 	})
 	describe('update a blog', () => {

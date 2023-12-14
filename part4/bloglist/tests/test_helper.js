@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -16,6 +18,12 @@ const initialBlogs = [
 	}
 ]
 
+const initialUser = {
+	username: 'root',
+	name: 'admin',
+	password: 'secure'
+}
+
 const blogsInDb = async () => {
 	const blogs = await Blog.find({})
 	return blogs.map(blog => blog.toJSON())
@@ -24,6 +32,32 @@ const blogsInDb = async () => {
 const usersInDb = async () => {
 	const users = await User.find({})
 	return users.map(m => m.toJSON())
+}
+
+const resetUsersToOneUserAndGetId = async () => {
+	await User.deleteMany({})
+	const passwordHash = await bcrypt.hash(initialUser.password, 10)
+	const user = new User({
+		username: initialUser.username,
+		name: initialUser.name,
+		passwordHash
+	})
+	const savedUser = await user.save()
+	return savedUser._id.toString()
+}
+
+const getTokenForFirstUserInDb = async () => {
+	const users = await User.find({})
+	const user = users[0]
+
+	const userForToken = {
+		username: user.username,
+		id: user._id
+	}
+
+	const token = jwt.sign(userForToken, process.env.SECRET)
+
+	return token
 }
 
 const nonExistingId = async () => {
@@ -40,7 +74,10 @@ const nonExistingId = async () => {
 
 module.exports = {
 	blogsInDb,
+	usersInDb,
 	initialBlogs,
+	initialUser,
+	resetUsersToOneUserAndGetId,
 	nonExistingId,
-	usersInDb
+	getTokenForFirstUserInDb
 }

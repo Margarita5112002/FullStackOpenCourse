@@ -1,18 +1,13 @@
 require('express-async-errors')
-const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
-const User = require('../models/user')
 const helper = require('./test_helper')
 
 describe('when there initially one user in db', () => {
 	beforeEach(async () => {
-		await User.deleteMany({})
-		const passwordHash = await bcrypt.hash('secret', 10)
-		const user = new User({ username: 'root', passwordHash })
-		await user.save()
+		await helper.resetUsersToOneUserAndGetId()
 	})
 
 	describe('creation of a user', () => {
