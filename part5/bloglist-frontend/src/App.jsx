@@ -48,6 +48,18 @@ const App = () => {
 		}
 	}
 
+	const setSuccessMessage = (msg, disappearIn = 0) => {
+		setMessage({
+			message: msg,
+			error: false
+		})
+		if (disappearIn > 0) {
+			setTimeout(() => {
+				setMessage(null)
+			}, disappearIn)
+		}
+	}
+
 	const handleLogin = async (event) => {
 		event.preventDefault()
 		console.log('logging ... ')
@@ -61,8 +73,9 @@ const App = () => {
 			setUser(user)
 			setUsername('')
 			setPassword('')
+			setSuccessMessage(`Log in ${user.name}`, 5000)
 		} catch (exception) {
-			setErrorMessage('Wrong Credentials', 5000)
+			setErrorMessage(exception.response.data.error, 5000)
 		}
 	}
 
@@ -108,8 +121,8 @@ const App = () => {
 			setAuthor('')
 			setUrl('')
 			setBlogs(blogs.concat(response))
+			setSuccessMessage(`a new blog ${response.title} by ${response.author} added`, 5000)
 		} catch (exception){
-			console.log(exception)
 			setErrorMessage(exception.response.data.error, 5000)
 		}
 	}
