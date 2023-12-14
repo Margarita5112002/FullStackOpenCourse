@@ -24,6 +24,15 @@ const App = () => {
 		)
 	}, [])
 
+	useEffect(() => {
+		const loggedUser = window.localStorage.getItem('loggedBlogappUser')
+		if (loggedUser){
+			const parseLoggedUser = JSON.parse(loggedUser)
+			setUser(parseLoggedUser)
+			blogService.setToken(parseLoggedUser.token)
+		}
+	}, [])
+
 	const setErrorMessage = (msg, disappearIn = 0) => {
 		setMessage({
 			message: msg,
@@ -44,6 +53,7 @@ const App = () => {
 				username,
 				password
 			})
+			window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
 			blogService.setToken(user.token)
 			setUser(user)
 			setUsername('')
@@ -76,10 +86,17 @@ const App = () => {
 		</div>
 	)
 
+	const logOut = () => {
+		window.localStorage.clear()
+		setUser(null)
+		blogService.setToken('')
+	}
+
 	const blogForm = () => (
 		<div>
 			<h2>blogs</h2>
 			<p>{user.name} is logged !!!</p>
+			<button onClick={logOut}>Log out</button>
 			{blogs.map(blog =>
 				<Blog key={blog.id} blog={blog} />
 			)}
