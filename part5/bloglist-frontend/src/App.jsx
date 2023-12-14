@@ -17,6 +17,9 @@ const App = () => {
 	const [user, setUser] = useState(null)
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
+	const [title, setTitle] = useState('')
+	const [url, setUrl] = useState('')
+	const [author, setAuthor] = useState('')
 
 	useEffect(() => {
 		blogService.getAll().then(blogs =>
@@ -26,7 +29,7 @@ const App = () => {
 
 	useEffect(() => {
 		const loggedUser = window.localStorage.getItem('loggedBlogappUser')
-		if (loggedUser){
+		if (loggedUser) {
 			const parseLoggedUser = JSON.parse(loggedUser)
 			setUser(parseLoggedUser)
 			blogService.setToken(parseLoggedUser.token)
@@ -92,11 +95,58 @@ const App = () => {
 		blogService.setToken('')
 	}
 
+	const handleNewBlog = async (event) => {
+		event.preventDefault()
+		console.log('create new blog ...')
+		try {
+			const response = await blogService.create({
+				title,
+				url, 
+				author
+			})
+			setTitle('')
+			setAuthor('')
+			setUrl('')
+			setBlogs(blogs.concat(response))
+		} catch (exception){
+			console.log(exception)
+			setErrorMessage(exception.response.data.error, 5000)
+		}
+	}
+
 	const blogForm = () => (
 		<div>
 			<h2>blogs</h2>
-			<p>{user.name} is logged !!!</p>
+			<p>{user.name} logged in</p>
 			<button onClick={logOut}>Log out</button>
+			<form onSubmit={handleNewBlog}>
+				<h1>Create new blog</h1>
+				<label>
+					title:
+					<input
+						type='text'
+						name='title'
+						value={ title }
+						onChange={({target}) => {setTitle(target.value)}} />
+				</label><br />
+				<label>
+					author:
+					<input
+						type='text'
+						name='author'
+						value={ author }
+						onChange={({target}) => {setAuthor(target.value)}} />
+				</label><br />
+				<label>
+					url:
+					<input
+						type='text'
+						name='url'
+						value={ url }
+						onChange={({target}) => {setUrl(target.value)}} />
+				</label><br />
+				<button type='submit'>Create</button>
+			</form>
 			{blogs.map(blog =>
 				<Blog key={blog.id} blog={blog} />
 			)}
