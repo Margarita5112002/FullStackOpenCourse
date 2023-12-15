@@ -1,7 +1,7 @@
 import { useState } from "react"
 import '../index.css'
 
-const Blog = ({ blog, likeBlog }) => {
+const Blog = ({ blog, likeBlog, canDelete, deleteBlog }) => {
 	const [visible, setVisible] = useState(false)
 
 	const showWhenVisible = { display: visible ? '' : 'none' }
@@ -14,6 +14,10 @@ const Blog = ({ blog, likeBlog }) => {
 		await likeBlog(blog)
 	}
 
+	const onDelete = async () => {
+		await deleteBlog(blog)
+	}
+
 	return (
 		<div className="blog">
 			{blog.title} {blog.author}
@@ -22,6 +26,7 @@ const Blog = ({ blog, likeBlog }) => {
 				<p>url: {blog.url}</p>
 				<p>likes: {blog.likes}<button onClick={onLike}>Like</button></p>
 				<p>added by: {blog.user.name}</p>
+				{canDelete && <button onClick={onDelete}>Delete</button>}
 			</div>
 		</div>
 	)

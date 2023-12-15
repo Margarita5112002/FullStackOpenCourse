@@ -108,7 +108,7 @@ const App = () => {
 		blogService.setToken('')
 	}
 
-	const createBlog = async ({title, url, author}) => {
+	const createBlog = async ({ title, url, author }) => {
 		try {
 			const response = await blogService.create({
 				title,
@@ -133,7 +133,14 @@ const App = () => {
 			user: blog.user.id
 		}
 		const response = await blogService.update(blog.id, updatedBlog)
-		setBlogs(blogs.map(b => (b.id === blog.id) ? response : b ).sort(compareBlogs))
+		setBlogs(blogs.map(b => (b.id === blog.id) ? response : b).sort(compareBlogs))
+	}
+
+	const deleteBlog = async blog => {
+		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+			await blogService.deleteBlog(blog.id)
+			setBlogs(blogs.filter(b => b.id !== blog.id))
+		}
 	}
 
 	return (
@@ -146,7 +153,11 @@ const App = () => {
 				<button onClick={logOut}>Log out</button>
 				<BlogForm createBlog={createBlog} />
 				{blogs.map(blog =>
-					<Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+					<Blog key={blog.id}
+						blog={blog}
+						likeBlog={likeBlog}
+						canDelete={user.username === blog.user.username}
+						deleteBlog={deleteBlog} />
 				)}
 			</>}
 		</>
