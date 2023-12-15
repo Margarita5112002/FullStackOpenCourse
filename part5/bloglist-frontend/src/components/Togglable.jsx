@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useState, forwardRef, useImperativeHandle } from "react";
+import { useState, forwardRef, useImperativeHandle } from 'react'
 
 const Togglable = forwardRef((props, refs) => {
 	const [visible, setVisible] = useState(false)
@@ -33,5 +33,7 @@ const Togglable = forwardRef((props, refs) => {
 Togglable.propTypes = {
 	buttonLabel: PropTypes.string.isRequired
 }
+
+Togglable.displayName = 'Togglable'
 
 export default Togglable

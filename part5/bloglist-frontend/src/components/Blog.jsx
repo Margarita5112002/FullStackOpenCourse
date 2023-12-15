@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useState } from "react"
+import { useState } from 'react'
 import '../index.css'
 
 const Blog = ({ blog, likeBlog, canDelete, deleteBlog }) => {
@@ -10,7 +10,7 @@ const Blog = ({ blog, likeBlog, canDelete, deleteBlog }) => {
 	const toggleVisibility = () => {
 		setVisible(!visible)
 	}
-	
+
 	const onLike = async () => {
 		await likeBlog(blog)
 	}

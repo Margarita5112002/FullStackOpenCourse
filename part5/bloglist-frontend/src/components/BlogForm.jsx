@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
-import { useRef, useState } from "react"
-import Togglable from "./Togglable"
+import { useRef, useState } from 'react'
+import Togglable from './Togglable'
 
-const blogForm = ({ createBlog }) => {
+const BlogForm = ({ createBlog }) => {
 	const [title, setTitle] = useState('')
 	const [url, setUrl] = useState('')
 	const [author, setAuthor] = useState('')
@@ -62,4 +62,4 @@ BlogForm.propTypes = {
 	createBlog: PropTypes.func.isRequired
 }
 
-export default blogForm
+export default BlogForm
