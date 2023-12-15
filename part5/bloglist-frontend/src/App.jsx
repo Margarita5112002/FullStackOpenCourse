@@ -122,6 +122,18 @@ const App = () => {
 		}
 	}
 
+	const likeBlog = async (blog) => {
+		const updatedBlog = {
+			title: blog.title,
+			url: blog.url,
+			author: blog.author,
+			likes: blog.likes + 1,
+			user: blog.user.id
+		}
+		const response = await blogService.update(blog.id, updatedBlog)
+		setBlogs(blogs.map(b => (b.id === blog.id) ? response : b ))
+	}
+
 	return (
 		<>
 			{message !== null && <Notification message={message} />}
@@ -132,7 +144,7 @@ const App = () => {
 				<button onClick={logOut}>Log out</button>
 				<BlogForm createBlog={createBlog} />
 				{blogs.map(blog =>
-					<Blog key={blog.id} blog={blog} />
+					<Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
 				)}
 			</>}
 		</>
