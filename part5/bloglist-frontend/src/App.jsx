@@ -21,7 +21,7 @@ const App = () => {
 
 	useEffect(() => {
 		blogService.getAll().then(blogs =>
-			setBlogs(blogs)
+			setBlogs(blogs.sort(compareBlogs))
 		)
 	}, [])
 
@@ -33,6 +33,8 @@ const App = () => {
 			blogService.setToken(parseLoggedUser.token)
 		}
 	}, [])
+
+	const compareBlogs = (b1, b2) => b2.likes - b1.likes
 
 	const setErrorMessage = (msg, disappearIn = 0) => {
 		setMessage({
@@ -113,7 +115,7 @@ const App = () => {
 				url,
 				author
 			})
-			setBlogs(blogs.concat(response))
+			setBlogs(blogs.concat(response).sort(compareBlogs))
 			setSuccessMessage(`a new blog ${response.title} by ${response.author} added`, 5000)
 			return true
 		} catch (exception) {
@@ -131,7 +133,7 @@ const App = () => {
 			user: blog.user.id
 		}
 		const response = await blogService.update(blog.id, updatedBlog)
-		setBlogs(blogs.map(b => (b.id === blog.id) ? response : b ))
+		setBlogs(blogs.map(b => (b.id === blog.id) ? response : b ).sort(compareBlogs))
 	}
 
 	return (
