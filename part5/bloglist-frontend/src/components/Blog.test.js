@@ -32,4 +32,35 @@ describe('<Blog />', () => {
 		const fullDetailsDiv = container.querySelector('.fullDetails')
 		expect(fullDetailsDiv).toHaveStyle('display: none')
 	})
+	test('show url and likes if view button has been clicked', async () => {
+		const blog = {
+			title: 'Testing blog',
+			author: 'David',
+			url: 'www.abc.com',
+			likes: 40,
+			user: {
+				name: 'Magi',
+				username: 'user123',
+				id: '1234'
+			}
+		}
+
+		const dummyLikeBlog = jest.fn()
+		const dummyDeleteBlog = jest.fn()
+
+		const container = render(
+			<Blog blog={blog}
+				canDelete={false}
+				deleteBlog={dummyDeleteBlog}
+				likeBlog={dummyLikeBlog} />).container
+
+		const user = userEvent.setup()
+		const button = screen.getByText('View')
+		await user.click(button)
+
+		const authorElement = screen.getByText(blog.author, { exact: false })
+		const titleElement = screen.getByText(blog.title, { exact: false })
+		const urlElement = screen.getByText(blog.url, { exact: false })
+		const likesElement = screen.getByText(blog.likes, { exact: false })
+	})
 })
