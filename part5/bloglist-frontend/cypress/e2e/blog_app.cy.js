@@ -54,6 +54,23 @@ describe('Blog app', function () {
 				.should('contain', 'www.a.com')
 				.should('contain', 'Rob')
 		})
+
+		describe('and a blog exist', function (){
+			beforeEach(function (){
+				cy.createBlog({
+					title: 'An existing blog',
+					url: 'www.abc.com',
+					author: 'Tom'
+				})
+			})
+
+			it('can like a blog', function(){
+				cy.contains('View').click()
+				cy.contains('Like').click()
+				cy.get('.blog').contains('likes: 1')
+			})
+		})
+
 	})
 
 })
