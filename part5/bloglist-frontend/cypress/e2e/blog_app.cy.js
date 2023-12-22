@@ -55,6 +55,30 @@ describe('Blog app', function () {
 				.should('contain', 'Rob')
 		})
 
+		it('blogs are ordered by likes', function(){
+			cy.createBlog({
+				title: 'the blog with the most likes',
+				url: 'www.thebest.com',
+				author: 'Fran',
+				likes: 10
+			})
+			cy.createBlog({
+				title: 'the blog with the second most likes',
+				url: 'www.thesecond.com',
+				author: 'Rob',
+				likes: 5
+			})
+			cy.createBlog({
+				title: 'the blog with the least likes',
+				url: 'www.theworst.com',
+				author: 'Tom',
+				likes: 1
+			})
+			cy.get('.blog').eq(0).contains('the blog with the most likes')
+			cy.get('.blog').eq(1).contains('the blog with the second most likes')
+			cy.get('.blog').eq(2).contains('the blog with the least likes')
+		})
+
 		describe('and a blog exist', function (){
 			beforeEach(function (){
 				cy.createBlog({
