@@ -31,6 +31,7 @@ const BlogForm = ({ createBlog }) => {
 				<label>
 					title:
 					<input
+						id='title'
 						placeholder='Enter the blog title'
 						type='text'
 						name='title'
@@ -40,6 +41,7 @@ const BlogForm = ({ createBlog }) => {
 				<label>
 					author:
 					<input
+						id='author'
 						placeholder='Enter the blog author'
 						type='text'
 						name='author'
@@ -49,13 +51,14 @@ const BlogForm = ({ createBlog }) => {
 				<label>
 					url:
 					<input
+						id='url'
 						placeholder='Enter the blog url'
 						type='text'
 						name='url'
 						value={url}
 						onChange={({ target }) => { setUrl(target.value) }} />
 				</label><br />
-				<button type='submit'>Create</button>
+				<button id="create-blog-button" type='submit'>Create</button>
 			</form>
 		</Togglable>
 	)
