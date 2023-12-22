@@ -69,6 +69,12 @@ describe('Blog app', function () {
 				cy.contains('Like').click()
 				cy.get('.blog').contains('likes: 1')
 			})
+
+			it('can delete a blog if logged user created it', function(){
+				cy.contains('An existing blog').contains('View').click()
+				cy.contains('Delete').click()
+				cy.should('not.contain', 'An existing blog')
+			})
 		})
 
 	})
