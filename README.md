@@ -45,3 +45,11 @@ This repository contains my submissions to the Full Stack Open Course.
 - Token authentication
 
 [View exercises folder](/part4/)
+
+## [Part 5: Testing React apps](https://fullstackopen.com/en/part5)
+- Login in frontend
+- props.children and proptypes
+- Testing React apps
+- End to end testing
+
+[View exercises folder](/part5/)
