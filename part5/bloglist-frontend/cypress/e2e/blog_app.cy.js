@@ -75,6 +75,20 @@ describe('Blog app', function () {
 				cy.contains('Delete').click()
 				cy.should('not.contain', 'An existing blog')
 			})
+
+			it('can not delete a blog if logged user did not created it', function(){
+				cy.createNewUser({
+					username: 'newuser123',
+					password: '54321',
+					name: 'Carla'
+				})
+				cy.login({
+					username: 'newuser123',
+					password: '54321'
+				})
+				cy.contains('An existing blog').contains('View').click()
+				cy.contains('An existing blog').should('not.contain', 'Delete')
+			})
 		})
 
 	})
