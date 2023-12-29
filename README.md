@@ -53,3 +53,11 @@ This repository contains my submissions to the Full Stack Open Course.
 - End to end testing
 
 [View exercises folder](/part5/)
+
+## [Part 6: Advanced state management](https://fullstackopen.com/en/part6)
+- Flux-architecture and Redux
+- Many reducers
+- Communicating with server in a redux application
+- React Query, useReducer and the context
+
+[View exercises folder](/part6/)
