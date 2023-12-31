@@ -10,6 +10,7 @@ import AnecdoteList from './components/AnecdoteList'
 import About from './components/About'
 import Footer from './components/Footer'
 import CreateNew from './components/CreateNew'
+import Anecdote from './components/Anecdote'
 
 const App = () => {
 	const [anecdotes, setAnecdotes] = useState([
@@ -55,6 +56,7 @@ const App = () => {
 			<h1>Software anecdotes</h1>
 			<Menu />
 			<Routes>
+				<Route path='/anecdotes/:id' element={<Anecdote anecdotes={anecdotes} />} />
 				<Route path='/create' element={<CreateNew addNew={addNew} />} />
 				<Route path='/about' element={<About />} />
 				<Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />

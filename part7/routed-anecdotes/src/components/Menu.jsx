@@ -7,9 +7,9 @@ const Menu = () => {
 
 	return (
 		<div>
-			<Link href='#' style={padding} to='/'>anecdotes</Link>
-			<Link href='#' style={padding} to='/create'>create new</Link>
-			<Link href='#' style={padding} to='/about'>about</Link>
+			<Link style={padding} to='/'>anecdotes</Link>
+			<Link style={padding} to='/create'>create new</Link>
+			<Link style={padding} to='/about'>about</Link>
 		</div>
 	)
 }
