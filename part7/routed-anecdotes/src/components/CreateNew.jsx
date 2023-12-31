@@ -1,10 +1,18 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const CreateNew = (props) => {
 	const [content, setContent] = useState('')
 	const [author, setAuthor] = useState('')
 	const [info, setInfo] = useState('')
+	const navigate = useNavigate()
 
+	const showNotification = (content, displayInSeconds) =>{ 
+		props.notify(`a new anecdote "${content}" created`)
+		setTimeout(() => {
+			props.notify('')
+		}, displayInSeconds * 1000)
+	}
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
@@ -14,6 +22,8 @@ const CreateNew = (props) => {
 			info,
 			votes: 0
 		})
+		showNotification(content, 5)
+		navigate('/')
 	}
 
 	return (
