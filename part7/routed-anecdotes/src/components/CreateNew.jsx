@@ -8,7 +8,7 @@ const CreateNew = (props) => {
 	const info = useField('text')
 	const navigate = useNavigate()
 
-	const showNotification = (content, displayInSeconds) =>{ 
+	const showNotification = (content, displayInSeconds) => {
 		props.notify(`a new anecdote "${content}" created`)
 		setTimeout(() => {
 			props.notify('')
@@ -27,23 +27,31 @@ const CreateNew = (props) => {
 		navigate('/')
 	}
 
+	const handleReset = (e) => {
+		e.preventDefault()
+		content.reset()
+		author.reset()
+		info.reset()
+	}
+
 	return (
 		<div>
 			<h2>create a new anecdote</h2>
 			<form onSubmit={handleSubmit}>
 				<div>
 					content
-					<input {... content}/>
+					<input {...content} />
 				</div>
 				<div>
 					author
-					<input {... author}/>
+					<input {...author} />
 				</div>
 				<div>
 					url for more info
-					<input {... info}/>
+					<input {...info} />
 				</div>
 				<button>create</button>
+				<button onClick={handleReset}>reset</button>
 			</form>
 		</div>
 	)
