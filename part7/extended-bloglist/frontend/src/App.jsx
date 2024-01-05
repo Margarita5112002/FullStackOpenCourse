@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import './index.css'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
-const Notification = ({ message }) => {
-	if (message.error) {
-		return <div className="error">{message.message}</div>
-	}
-	return <div className="notification">{message.message}</div>
-}
+import Notification from './components/Notification'
+import { notify } from './reducers/notificationReducer'
 
 const App = () => {
-	const [message, setMessage] = useState(null)
+	const message = useSelector(state => state.notification)
+	const dispatch = useDispatch()
 	const [blogs, setBlogs] = useState([])
 	const [user, setUser] = useState(null)
 	const [username, setUsername] = useState('')
@@ -34,28 +31,16 @@ const App = () => {
 
 	const compareBlogs = (b1, b2) => b2.likes - b1.likes
 
+	const setMessage = (msg, disappearIn, err) => {
+		dispatch(notify(msg, err, disappearIn))
+	}
+
 	const setErrorMessage = (msg, disappearIn = 0) => {
-		setMessage({
-			message: msg,
-			error: true,
-		})
-		if (disappearIn > 0) {
-			setTimeout(() => {
-				setMessage(null)
-			}, disappearIn)
-		}
+		setMessage(msg, disappearIn, true)
 	}
 
 	const setSuccessMessage = (msg, disappearIn = 0) => {
-		setMessage({
-			message: msg,
-			error: false,
-		})
-		if (disappearIn > 0) {
-			setTimeout(() => {
-				setMessage(null)
-			}, disappearIn)
-		}
+		setMessage(msg, disappearIn, false)
 	}
 
 	const handleLogin = async (event) => {
@@ -71,9 +56,9 @@ const App = () => {
 			setUser(user)
 			setUsername('')
 			setPassword('')
-			setSuccessMessage(`Log in ${user.name}`, 5000)
+			setSuccessMessage(`Log in ${user.name}`, 5)
 		} catch (exception) {
-			setErrorMessage(exception.response.data.error, 5000)
+			setErrorMessage(exception.response.data.error, 5)
 		}
 	}
 
@@ -124,11 +109,11 @@ const App = () => {
 			setBlogs(blogs.concat(response).sort(compareBlogs))
 			setSuccessMessage(
 				`a new blog ${response.title} by ${response.author} added`,
-				5000,
+				5,
 			)
 			return true
 		} catch (exception) {
-			setErrorMessage(exception.response.data.error, 5000)
+			setErrorMessage(exception.response.data.error, 5)
 			return false
 		}
 	}
