@@ -7,18 +7,19 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import { notify } from './reducers/notificationReducer'
+import { addBlog, initializeBlogs } from './reducers/blogsReducer'
 
 const App = () => {
 	const message = useSelector(state => state.notification)
+	const blogs = useSelector(state => state.blogs)
 	const dispatch = useDispatch()
-	const [blogs, setBlogs] = useState([])
 	const [user, setUser] = useState(null)
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 
 	useEffect(() => {
-		blogService.getAll().then((blogs) => setBlogs(blogs.sort(compareBlogs)))
-	}, [])
+		dispatch(initializeBlogs())
+	}, [dispatch])
 
 	useEffect(() => {
 		const loggedUser = window.localStorage.getItem('loggedBlogappUser')
@@ -28,8 +29,6 @@ const App = () => {
 			blogService.setToken(parseLoggedUser.token)
 		}
 	}, [])
-
-	const compareBlogs = (b1, b2) => b2.likes - b1.likes
 
 	const setMessage = (msg, disappearIn, err) => {
 		dispatch(notify(msg, err, disappearIn))
@@ -106,7 +105,7 @@ const App = () => {
 				url,
 				author,
 			})
-			setBlogs(blogs.concat(response).sort(compareBlogs))
+			dispatch(addBlog(response))
 			setSuccessMessage(
 				`a new blog ${response.title} by ${response.author} added`,
 				5,
@@ -127,15 +126,15 @@ const App = () => {
 			user: blog.user.id,
 		}
 		const response = await blogService.update(blog.id, updatedBlog)
-		setBlogs(
+		/*setBlogs(
 			blogs.map((b) => (b.id === blog.id ? response : b)).sort(compareBlogs),
-		)
+		)*/
 	}
 
 	const deleteBlog = async (blog) => {
 		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
 			await blogService.deleteBlog(blog.id)
-			setBlogs(blogs.filter((b) => b.id !== blog.id))
+			//setBlogs(blogs.filter((b) => b.id !== blog.id))
 		}
 	}
 
