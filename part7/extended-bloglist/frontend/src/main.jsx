@@ -9,13 +9,12 @@ import blogsReducer from './reducers/blogsReducer'
 const store = configureStore({
 	reducer: {
 		notification: notificationReducer,
-		blogs: blogsReducer
-	}
+		blogs: blogsReducer,
+	},
 })
 
-ReactDOM.createRoot(document.getElementById('root'))
-	.render(
-		<Provider store={store}>
-			<App />
-		</Provider>
-	)
+ReactDOM.createRoot(document.getElementById('root')).render(
+	<Provider store={store}>
+		<App />
+	</Provider>,
+)

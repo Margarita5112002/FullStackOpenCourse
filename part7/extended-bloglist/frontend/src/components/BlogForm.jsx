@@ -12,16 +12,11 @@ const BlogForm = ({ createBlog }) => {
 	const addBlog = async (e) => {
 		e.preventDefault()
 		console.log('create new blog ...')
-		const success = await createBlog({
+		createBlog({
 			title,
 			url,
 			author,
 		})
-		if (success) {
-			setTitle('')
-			setAuthor('')
-			setUrl('')
-		}
 	}
 
 	return (

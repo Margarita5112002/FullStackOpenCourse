@@ -7,11 +7,11 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import { notify } from './reducers/notificationReducer'
-import { addBlog, initializeBlogs } from './reducers/blogsReducer'
+import { createNewBlog, deleteUpdateBlog, initializeBlogs, likeUpdateBlog } from './reducers/blogsReducer'
 
 const App = () => {
-	const message = useSelector(state => state.notification)
-	const blogs = useSelector(state => state.blogs)
+	const message = useSelector((state) => state.notification)
+	const blogs = useSelector((state) => state.blogs)
 	const dispatch = useDispatch()
 	const [user, setUser] = useState(null)
 	const [username, setUsername] = useState('')
@@ -99,42 +99,16 @@ const App = () => {
 	}
 
 	const createBlog = async ({ title, url, author }) => {
-		try {
-			const response = await blogService.create({
-				title,
-				url,
-				author,
-			})
-			dispatch(addBlog(response))
-			setSuccessMessage(
-				`a new blog ${response.title} by ${response.author} added`,
-				5,
-			)
-			return true
-		} catch (exception) {
-			setErrorMessage(exception.response.data.error, 5)
-			return false
-		}
+		dispatch(createNewBlog({ title, url, author }))
 	}
 
 	const likeBlog = async (blog) => {
-		const updatedBlog = {
-			title: blog.title,
-			url: blog.url,
-			author: blog.author,
-			likes: blog.likes + 1,
-			user: blog.user.id,
-		}
-		const response = await blogService.update(blog.id, updatedBlog)
-		/*setBlogs(
-			blogs.map((b) => (b.id === blog.id ? response : b)).sort(compareBlogs),
-		)*/
+		dispatch(likeUpdateBlog(blog))
 	}
 
 	const deleteBlog = async (blog) => {
 		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-			await blogService.deleteBlog(blog.id)
-			//setBlogs(blogs.filter((b) => b.id !== blog.id))
+			dispatch(deleteUpdateBlog(blog.id))
 		}
 	}
 
