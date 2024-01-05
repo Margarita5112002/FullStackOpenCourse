@@ -3,17 +3,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import './index.css'
-import blogService from './services/blogs'
-import loginService from './services/login'
 import Notification from './components/Notification'
-import { notify } from './reducers/notificationReducer'
 import { createNewBlog, deleteUpdateBlog, initializeBlogs, likeUpdateBlog } from './reducers/blogsReducer'
+import { initializeUser, loginUser, logoutUser } from './reducers/userReducer'
 
 const App = () => {
 	const message = useSelector((state) => state.notification)
 	const blogs = useSelector((state) => state.blogs)
+	const user = useSelector(state => state.user)
 	const dispatch = useDispatch()
-	const [user, setUser] = useState(null)
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 
@@ -22,43 +20,13 @@ const App = () => {
 	}, [dispatch])
 
 	useEffect(() => {
-		const loggedUser = window.localStorage.getItem('loggedBlogappUser')
-		if (loggedUser) {
-			const parseLoggedUser = JSON.parse(loggedUser)
-			setUser(parseLoggedUser)
-			blogService.setToken(parseLoggedUser.token)
-		}
-	}, [])
-
-	const setMessage = (msg, disappearIn, err) => {
-		dispatch(notify(msg, err, disappearIn))
-	}
-
-	const setErrorMessage = (msg, disappearIn = 0) => {
-		setMessage(msg, disappearIn, true)
-	}
-
-	const setSuccessMessage = (msg, disappearIn = 0) => {
-		setMessage(msg, disappearIn, false)
-	}
+		dispatch(initializeUser())
+	}, [dispatch])
 
 	const handleLogin = async (event) => {
 		event.preventDefault()
 		console.log('logging ... ')
-		try {
-			const user = await loginService.login({
-				username,
-				password,
-			})
-			window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-			blogService.setToken(user.token)
-			setUser(user)
-			setUsername('')
-			setPassword('')
-			setSuccessMessage(`Log in ${user.name}`, 5)
-		} catch (exception) {
-			setErrorMessage(exception.response.data.error, 5)
-		}
+		dispatch(loginUser(username, password))
 	}
 
 	const loginForm = () => (
@@ -93,9 +61,7 @@ const App = () => {
 	)
 
 	const logOut = () => {
-		window.localStorage.clear()
-		setUser(null)
-		blogService.setToken('')
+		dispatch(logoutUser())
 	}
 
 	const createBlog = async ({ title, url, author }) => {
