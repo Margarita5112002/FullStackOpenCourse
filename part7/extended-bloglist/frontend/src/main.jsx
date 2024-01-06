@@ -15,12 +15,12 @@ const store = configureStore({
 		notification: notificationReducer,
 		blogs: blogsReducer,
 		user: userReducer,
-		users: usersReducer
+		users: usersReducer,
 	},
 })
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<Provider store={store}>
 		<App />
-	</Provider>
+	</Provider>,
 )
