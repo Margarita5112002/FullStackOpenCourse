@@ -3,31 +3,33 @@ import blogService from '../services/blogs'
 import loginService from '../services/login'
 import { notify } from './notificationReducer'
 
+const initializeUser = () => {
+	const loggedUser = window.localStorage.getItem('loggedBlogappUser')
+	if (loggedUser) {
+		const parseLoggedUser = JSON.parse(loggedUser)
+		blogService.setToken(parseLoggedUser.token)
+		return parseLoggedUser
+	}
+	return null
+}
+
 const userSlice = createSlice({
 	name: 'user',
-	initialState: null,
+	initialState: initializeUser(),
 	reducers: {
-		setUser(action, state){
+		setUser(action, state) {
 			return state.payload
 		},
-		initializeUser(action, state){
-			const loggedUser = window.localStorage.getItem('loggedBlogappUser')
-			if (loggedUser) {
-				const parseLoggedUser = JSON.parse(loggedUser)
-				blogService.setToken(parseLoggedUser.token)
-				return parseLoggedUser
-			}
-		},
-		logoutUser(action, state){
+		logoutUser(action, state) {
 			window.localStorage.clear()
 			blogService.setToken('')
 			return null
-		}
-	}
+		},
+	},
 })
 
 export const loginUser = (username, password) => {
-	return async dispatch => {
+	return async (dispatch) => {
 		try {
 			const user = await loginService.login({
 				username,
@@ -43,5 +45,5 @@ export const loginUser = (username, password) => {
 	}
 }
 
-export const { setUser, logoutUser, initializeUser } = userSlice.actions
+export const { setUser, logoutUser } = userSlice.actions
 export default userSlice.reducer

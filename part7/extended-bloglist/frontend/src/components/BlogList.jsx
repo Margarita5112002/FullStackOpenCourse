@@ -4,8 +4,8 @@ import Blog from './Blog'
 
 const BlogList = () => {
 	const dispatch = useDispatch()
-	const user = useSelector(state => state.user)
-	const blogs = useSelector(state => state.blogs)
+	const user = useSelector((state) => state.user)
+	const blogs = useSelector((state) => state.blogs)
 
 	const likeBlog = async (blog) => {
 		dispatch(likeUpdateBlog(blog))
