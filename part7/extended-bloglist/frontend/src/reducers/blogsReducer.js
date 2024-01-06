@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import blogService from '../services/blogs'
 import { notify } from './notificationReducer'
+import { useSelector } from 'react-redux'
 
 const compareBlogs = (b1, b2) => b2.likes - b1.likes
 
@@ -77,6 +78,10 @@ export const deleteUpdateBlog = (blogId) => {
 		await blogService.deleteBlog(blogId)
 		dispatch(deleteBlog(blogId))
 	}
+}
+
+export const useBlogById = (blogId) => {
+	return useSelector(state => state.blogs.find(b => b.id === blogId))
 }
 
 export const { setBlogs, addBlog, updateBlog, deleteBlog } = blogSlice.actions

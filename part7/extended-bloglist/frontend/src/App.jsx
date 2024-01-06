@@ -13,6 +13,7 @@ import UserList from './components/UserList'
 import Home from './components/Home'
 import LoggedUser from './components/LoggedUser'
 import User from './components/User'
+import Blog from './components/Blog'
 
 const App = () => {
 	const message = useSelector((state) => state.notification)
@@ -32,6 +33,9 @@ const App = () => {
 			{message !== null && <Notification message={message} />}
 			{user && <LoggedUser />}
 			<Routes>
+				<Route
+					path="/blogs/:id"
+					element={user ? <Blog /> : <Navigate to="/" />} />
 				<Route
 					path="/users/:id"
 					element={user ? <User /> : <Navigate to="/" />} />

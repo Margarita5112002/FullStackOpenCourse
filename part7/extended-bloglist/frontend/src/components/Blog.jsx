@@ -1,46 +1,46 @@
-import PropTypes from 'prop-types'
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { likeUpdateBlog, deleteUpdateBlog, useBlogById } from '../reducers/blogsReducer'
+import { useNavigate, useParams } from 'react-router-dom'
 import '../index.css'
 
-const Blog = ({ blog, likeBlog, canDelete, deleteBlog }) => {
-	const [visible, setVisible] = useState(false)
+const Blog = () => {
+	const dispatch = useDispatch()
+	const navigate = useNavigate()
+	const blogId = useParams().id
+	const blog = useBlogById(blogId)
+	const user = useSelector(state => state.user)
 
-	const showWhenVisible = { display: visible ? '' : 'none' }
-
-	const toggleVisibility = () => {
-		setVisible(!visible)
+	if (!blog){
+		return null
 	}
 
 	const onLike = async () => {
-		await likeBlog(blog)
+		dispatch(likeUpdateBlog(blog))
 	}
 
 	const onDelete = async () => {
-		await deleteBlog(blog)
+		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+			dispatch(deleteUpdateBlog(blog.id))
+			navigate('/')
+		}
+	}
+
+	const canDelete = () => {
+		console.log(user)
+		console.log(blog)
+		return user.id === blog.user.id
 	}
 
 	return (
-		<div className="blog">
-			{blog.title} {blog.author}
-			<button onClick={toggleVisibility}>{visible ? 'Hide' : 'View'}</button>
-			<div className="fullDetails" style={showWhenVisible}>
-				<p>url: {blog.url}</p>
-				<p>
-          likes: {blog.likes}
-					<button onClick={onLike}>Like</button>
-				</p>
-				<p>added by: {blog.user.name}</p>
-				{canDelete && <button onClick={onDelete}>Delete</button>}
-			</div>
+		<div>
+			<h1>{blog.title} by {blog.author}</h1>
+			<p>url: {blog.url}</p>
+			<p>likes: {blog.likes} <button onClick={onLike}>Like</button></p>
+			<p>added by: {blog.user.name}</p>
+			{canDelete() && <button onClick={onDelete}>Delete</button>}
 		</div>
 	)
-}
-
-Blog.propTypes = {
-	blog: PropTypes.object.isRequired,
-	likeBlog: PropTypes.func.isRequired,
-	canDelete: PropTypes.bool.isRequired,
-	deleteBlog: PropTypes.func.isRequired,
 }
 
 export default Blog
