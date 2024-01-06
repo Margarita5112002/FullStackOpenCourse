@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { likeUpdateBlog, deleteUpdateBlog, useBlogById } from '../reducers/blogsReducer'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -27,8 +26,6 @@ const Blog = () => {
 	}
 
 	const canDelete = () => {
-		console.log(user)
-		console.log(blog)
 		return user.id === blog.user.id
 	}
 
