@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import { useRef, useState } from 'react'
 import Togglable from './Togglable'
 import { useDispatch } from 'react-redux'

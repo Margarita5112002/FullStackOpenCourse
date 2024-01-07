@@ -6,9 +6,42 @@ const userSlice = createSlice({
 	name: 'users',
 	initialState: [],
 	reducers: {
-		setUsers(action, state) {
-			return state.payload
+		setUsers(state, action) {
+			return action.payload
 		},
+		addBlogToUser(state, action) {
+			const { userId, blog } = action.payload
+			return state.map(u => {
+				if (u.id === userId){
+					return {
+						... u,
+						blogs: u.blogs.concat(blog)
+					}
+				}
+				return u
+			})
+		},
+		updateBlogFromUser(state, action) {
+			const { userId, blogId, blog } = action.payload
+			return state.map(u => {
+				if (u.id === userId){
+					return {
+						... u,
+						blogs: u.blogs.map(b => b.id === blogId ? blog : b)
+					}
+				}
+				return u
+			})
+		},
+		deleteBlogFromUser(state, action){
+			const { blogId } = action.payload
+			return state.map(u => {
+				return {
+					... u,
+					blogs: u.blogs.filter(b => b.id !== blogId)
+				}
+			})
+		}
 	},
 })
 
@@ -27,5 +60,5 @@ export const useUserById = (id) => {
 	return useSelector(state => state.users.find(u => u.id === id))
 }
 
-export const { setUsers } = userSlice.actions
+export const { setUsers, addBlogToUser, updateBlogFromUser, deleteBlogFromUser } = userSlice.actions
 export default userSlice.reducer

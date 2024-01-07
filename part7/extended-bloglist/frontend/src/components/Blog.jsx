@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { likeUpdateBlog, deleteUpdateBlog, useBlogById } from '../reducers/blogsReducer'
 import { useNavigate, useParams } from 'react-router-dom'
-import '../index.css'
+import CommentForm from './CommentForm'
+import CommentList from './CommentList'
 
 const Blog = () => {
 	const dispatch = useDispatch()
@@ -36,6 +37,9 @@ const Blog = () => {
 			<p>likes: {blog.likes} <button onClick={onLike}>Like</button></p>
 			<p>added by: {blog.user.name}</p>
 			{canDelete() && <button onClick={onDelete}>Delete</button>}
+			<h1>Comments</h1>
+			<CommentForm blog={blog} />
+			<CommentList blog={blog} />
 		</div>
 	)
 }

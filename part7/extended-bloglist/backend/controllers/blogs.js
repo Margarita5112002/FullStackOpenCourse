@@ -1,8 +1,6 @@
 require('express-async-errors')
-const jwt = require('jsonwebtoken')
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
 
 blogRouter.get('/', async (request, response) => {
 	const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -23,6 +21,7 @@ blogRouter.post('/', async (request, response) => {
 		url: body.url,
 		likes: body.likes === undefined ? 0 : body.likes,
 		user: user.id,
+		comments: []
 	}
 
 	const blog = new Blog(newBlog)
@@ -31,6 +30,35 @@ blogRouter.post('/', async (request, response) => {
 	user.blogs = user.blogs.concat(result._id)
 	await user.save()
 	response.status(201).json(result)
+})
+
+blogRouter.post('/:id/comments', async (request, response) => {
+	const comment = request.body.comment
+	const user = request.user
+
+	if (!user) {
+		return response.status(401).json({ error: 'not authorized' })
+	}
+
+	const blog = await Blog.findById(request.params.id)
+	const updatedBlog = {
+		title: blog.title,
+		author: blog.author,
+		url: blog.url,
+		likes: blog.likes,
+		user: blog.user,
+		comments: blog.comments.concat(comment)
+	}
+	const blogUpdated = await Blog.findByIdAndUpdate(request.params.id, updatedBlog, {
+		new: true,
+		runValidators: true,
+		context: 'query',
+	})
+	if (blogUpdated) {
+		const result = await blogUpdated.populate('user', { username: 1, name: 1 })
+		return response.status(200).json(result)
+	}
+	response.status(404).end()
 })
 
 blogRouter.delete('/:id', async (request, response) => {

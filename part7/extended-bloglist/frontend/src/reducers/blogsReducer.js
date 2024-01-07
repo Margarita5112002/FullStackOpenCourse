@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import blogService from '../services/blogs'
 import { notify } from './notificationReducer'
+import { addBlogToUser, deleteBlogFromUser, updateBlogFromUser } from './usersReducer'
 import { useSelector } from 'react-redux'
 
 const compareBlogs = (b1, b2) => b2.likes - b1.likes
@@ -41,6 +42,10 @@ export const createNewBlog = ({ title, url, author }) => {
 				author,
 			})
 			dispatch(addBlog(newBlog))
+			dispatch(addBlogToUser({
+				userId: newBlog.user.id,
+				blog: newBlog
+			}))
 			dispatch(
 				notify(
 					`a new blog ${newBlog.title} by ${newBlog.author} added`,
@@ -62,6 +67,7 @@ export const likeUpdateBlog = (blog) => {
 			author: blog.author,
 			likes: blog.likes + 1,
 			user: blog.user.id,
+			comments: blog.comments
 		}
 		const response = await blogService.update(blog.id, updatedBlog)
 		dispatch(
@@ -70,6 +76,32 @@ export const likeUpdateBlog = (blog) => {
 				blog: response,
 			}),
 		)
+		dispatch(
+			updateBlogFromUser({
+				userId: response.user.id,
+				blogId: response.id,
+				blog: response
+			})
+		)
+	}
+}
+
+export const commentUpdateBlog = (blog, comment) => {
+	return async (dispatch) => {
+		const response = await blogService.addCommentTo(blog.id, comment)
+		dispatch(
+			updateBlog({
+				blogId: blog.id,
+				blog: response,
+			}),
+		)
+		dispatch(
+			updateBlogFromUser({
+				userId: response.user.id,
+				blogId: response.id,
+				blog: response
+			})
+		)
 	}
 }
 
@@ -77,6 +109,7 @@ export const deleteUpdateBlog = (blogId) => {
 	return async (dispatch) => {
 		await blogService.deleteBlog(blogId)
 		dispatch(deleteBlog(blogId))
+		dispatch(deleteBlogFromUser({ blogId }))
 	}
 }
 
