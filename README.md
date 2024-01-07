@@ -61,3 +61,13 @@ This repository contains my submissions to the Full Stack Open Course.
 - React Query, useReducer and the context
 
 [View exercises folder](/part6/)
+
+## [Part 7: React router, custom hooks, styling app with CSS and webpack](https://fullstackopen.com/en/part7)
+- React Router
+- Custom hooks
+- More about styles
+- Webpack
+- Class components, Miscellaneous
+- Exercises: extending the bloglist
+
+[View exercises folder](/part7/)
