@@ -1,13 +1,14 @@
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import { useUsers } from '../reducers/usersReducer'
 import { Link } from 'react-router-dom'
 
 const User = ({ user }) => (
-	<tr>
-		<td>
+	<TableRow>
+		<TableCell>
 			<Link to={`/users/${user.id}`}>{user.name}</Link>
-		</td>
-		<td>{user.blogs.length}</td>
-	</tr>
+		</TableCell>
+		<TableCell>{user.blogs.length}</TableCell>
+	</TableRow>
 )
 
 const UserList = () => {
@@ -16,19 +17,21 @@ const UserList = () => {
 	return (
 		<>
 			<h1>Users</h1>
-			<table>
-				<thead>
-					<tr>
-						<th></th>
-						<th>blogs created</th>
-					</tr>
-				</thead>
-				<tbody>
-					{users.map((user) => (
-						<User key={user.id} user={user} />
-					))}
-				</tbody>
-			</table>
+			<TableContainer component={Paper}>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell></TableCell>
+							<TableCell>blogs created</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{users.map((user) => (
+							<User key={user.id} user={user} />
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
 		</>
 	)
 }

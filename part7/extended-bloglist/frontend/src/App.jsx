@@ -14,6 +14,7 @@ import Home from './components/Home'
 import User from './components/User'
 import Blog from './components/Blog'
 import Menu from './components/Menu'
+import { Container } from '@mui/material'
 
 const App = () => {
 	const message = useSelector((state) => state.notification)
@@ -30,21 +31,23 @@ const App = () => {
 
 	return (
 		<Router>
-			{user && <Menu />}
-			{message !== null && <Notification message={message} />}
-			<Routes>
-				<Route
-					path="/blogs/:id"
-					element={user ? <Blog /> : <Navigate to="/" />} />
-				<Route
-					path="/users/:id"
-					element={user ? <User /> : <Navigate to="/" />} />
-				<Route
-					path="/users"
-					element={user ? <UserList /> : <Navigate to="/" />}
-				/>
-				<Route path="/" element={<Home />} />
-			</Routes>
+			<Container>
+				{user && <Menu />}
+				{message !== null && <Notification message={message} />}
+				<Routes>
+					<Route
+						path="/blogs/:id"
+						element={user ? <Blog /> : <Navigate to="/" />} />
+					<Route
+						path="/users/:id"
+						element={user ? <User /> : <Navigate to="/" />} />
+					<Route
+						path="/users"
+						element={user ? <UserList /> : <Navigate to="/" />}
+					/>
+					<Route path="/" element={<Home />} />
+				</Routes>
+			</Container>
 		</Router>
 	)
 }
