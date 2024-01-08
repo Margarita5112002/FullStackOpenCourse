@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client"
 import { ALL_AUTHORS, UPDATE_AUTHOR } from "../queries"
 import { useEffect, useState } from "react"
 
-const ChangeAuthorForm = () => {
+const ChangeAuthorForm = ({ authors }) => {
 	const [updateAuthor, result] = useMutation(UPDATE_AUTHOR, {
 		refetchQueries: [{query: ALL_AUTHORS}],
 		onError: (error) => {
@@ -13,7 +13,6 @@ const ChangeAuthorForm = () => {
 	const [error, setError] = useState(null)
 
 	useEffect(() => {
-		console.log(result.data)
 		if (result.data && result.data.editAuthor === null){
 			notify('author not found')
 		}
@@ -40,9 +39,11 @@ const ChangeAuthorForm = () => {
 			<h1>Set birthyear</h1>
 			{error && <div>{error}</div>}
 			<form onSubmit={onSubmit}>
-				<label>
-					name <input name="name"/>
-				</label><br />
+				<select name="name">
+					{authors.map(a => 
+						<option key={a.name} value={a.name}>{a.name}</option>)}
+				</select>
+				<br />
 				<label>
 					born <input type="number" name="born"/>
 				</label><br />
