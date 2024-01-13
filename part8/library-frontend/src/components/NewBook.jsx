@@ -8,12 +8,23 @@ const NewBook = (props) => {
   const [published, setPublished] = useState("");
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
+  const [error, setError] = useState('')
   const [createBook] = useMutation(CREATE_BOOK, {
-	refetchQueries: [{query: ALL_BOOKS}, {query: ALL_AUTHORS}]
+	refetchQueries: [{query: ALL_BOOKS}, {query: ALL_AUTHORS}],
+    onError: err => {
+        notify(err.graphQLErrors[0].message)
+    }
   });
 
   if (!props.show) {
     return null;
+  }
+
+  const notify = msg => {
+    setError(msg)
+    setTimeout(() => {
+        setError('')
+    }, 5000);
   }
 
   const submit = async (event) => {
@@ -37,6 +48,7 @@ const NewBook = (props) => {
 
   return (
     <div>
+        {error && <div>{error}</div>}
       <form onSubmit={submit}>
         <div>
           title
