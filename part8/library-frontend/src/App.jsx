@@ -3,24 +3,26 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import Login from "./components/Login";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
+import Recommend from "./components/Recommend";
 
 const App = () => {
   const client = useApolloClient();
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(null)
   const [page, setPage] = useState("authors");
 
   useEffect(() => {
-    const token = localStorage.getItem("library-usertoken");
-    if (token) {
-      setToken(token);
+    const token = localStorage.getItem("library-usertoken")
+    if (token){
+        setToken(token)
     }
-  }, []);
+  }, [])
 
   const logout = () => {
     setToken(null);
     localStorage.clear();
     client.resetStore();
+    setPage("authors")
   };
 
   return (
@@ -30,6 +32,7 @@ const App = () => {
         <button onClick={() => setPage("books")}>books</button>
         {!token && <button onClick={() => setPage("login")}>login</button>}
         {token && <button onClick={() => setPage("add")}>add book</button>}
+        {token && <button onClick={() => setPage("recommend")}>recommend</button>}
         {token && <button onClick={logout}>logout</button>}
       </div>
 
@@ -39,7 +42,9 @@ const App = () => {
 
       <NewBook show={page === "add"} />
 
-      <Login show={page === "login"} setToken={setToken} setPage={setPage} />
+      <Recommend show={page === "recommend"} />
+
+      <Login show={page === "login"} setPage={setPage} setToken={setToken}/>
     </div>
   );
 };

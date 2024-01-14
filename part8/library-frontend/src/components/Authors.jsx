@@ -4,7 +4,7 @@ import ChangeAuthorForm from "./ChangeAuthorForm";
 
 const Authors = ({show, token}) => {
   const result = useQuery(ALL_AUTHORS);
-
+  
   if (!show) {
     return null;
   }

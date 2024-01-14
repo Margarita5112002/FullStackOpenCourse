@@ -1,13 +1,12 @@
 import { useQuery } from "@apollo/client";
 import { ALL_BOOKS } from "../queries";
 import { useEffect, useState } from "react";
+import BookList from "./BookList";
 
 const Books = (props) => {
   const [filter, setFilter] = useState("");
   const [books, setBooks] = useState([]);
-  const result = useQuery(ALL_BOOKS, {
-    pollInterval: 2000,
-  });
+  const result = useQuery(ALL_BOOKS);
 
   useEffect(() => {
     if (result.data) {
@@ -35,32 +34,11 @@ const Books = (props) => {
 
   const genres = getAllGenres(books);
 
-  const onFilterChange = (e) => {
-    setFilter(e.target.value);
-  };
-
   return (
     <div>
       <h2>books</h2>
 
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th>author</th>
-            <th>published</th>
-          </tr>
-          {books
-            .filter((b) => !filter || b.genres.includes(filter))
-            .map((a) => (
-              <tr key={a.title}>
-                <td>{a.title}</td>
-                <td>{a.author.name}</td>
-                <td>{a.published}</td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+      <BookList filter={filter} books={books} />
       <form>
         <div>
           <label>
@@ -68,8 +46,8 @@ const Books = (props) => {
               type="radio"
               name="filter"
               value=""
-              onChange={onFilterChange}
-              defaultChecked
+              onChange={(e) => setFilter(e.target.value)}
+              checked={filter === ""}
             />
             all genres
           </label>
@@ -81,7 +59,8 @@ const Books = (props) => {
                 type="radio"
                 name="filter"
                 value={g}
-                onChange={onFilterChange}
+                onChange={(e) => setFilter(e.target.value)}
+                checked={filter === g}
               />
               {g}
             </label>
