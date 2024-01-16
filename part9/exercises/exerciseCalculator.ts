@@ -1,3 +1,5 @@
+import { all, isNumber } from "./utils"
+
 interface Result {
     periodLength: number,
     trainingDays: number,
@@ -6,6 +8,11 @@ interface Result {
     ratingDescription: string,
     target: number,
     average: number
+}
+
+interface Input {
+    target: number,
+    dailyExerciseHours: Array<number>
 }
 
 const getRatingDescription = (rating: number): string => {
@@ -19,10 +26,23 @@ const getRatingDescription = (rating: number): string => {
     return 'you need to put more effort'
 }
 
+const getAverage = (arr: Array<number>): number =>
+    arr.length == 0 ? 0 :
+        arr.reduce((b, curr) => b + curr, 0) / arr.length
+
+const parseArguments = (args: Array<string>): Input => {
+    if (args.length < 4) throw new Error('Not enough arguments')
+    if (!all(isNumber, args.slice(2))){
+        throw new Error('Provided arguments that are not numbers ...')
+    }
+    return {
+        target: Number(args[2]),
+        dailyExerciseHours: args.slice(3).map(a => Number(a))
+    }
+}
+
 const calculateExercises = (dailyExerciseHours: Array<number>, target: number): Result => {
-    const average = dailyExerciseHours.length == 0 ? 0 :
-        dailyExerciseHours
-            .reduce((b, curr) => b + curr, 0) / dailyExerciseHours.length
+    const average = getAverage(dailyExerciseHours)
     const rating = Math.floor((average / target) * 3)
     return {
         periodLength: dailyExerciseHours.length,
@@ -36,8 +56,6 @@ const calculateExercises = (dailyExerciseHours: Array<number>, target: number): 
     }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
-console.log(calculateExercises([], 2))
-console.log(calculateExercises([0, 0, 0], 2))
-console.log(calculateExercises([1, 2, 0, 3, 0, 0, 1, 1, 2, 0], 3))
-console.log(calculateExercises([12, 6, 2, 5, 5], 6))
+const {target, dailyExerciseHours} = parseArguments(process.argv)
+
+console.log(calculateExercises(dailyExerciseHours, target))
