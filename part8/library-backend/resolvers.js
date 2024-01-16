@@ -37,9 +37,6 @@ const resolvers = {
       return context.currentUser;
     },
   },
-  Author: {
-    bookCount: ({ name }) => 0,
-  },
   Mutation: {
     addBook: async (root, args, context) => {
       if (!context.currentUser) {
@@ -51,7 +48,7 @@ const resolvers = {
       }
       let author = await Author.findOne({ name: args.author });
       if (!author) {
-        author = new Author({ name: args.author });
+        author = new Author({ name: args.author, bookCount: 0 });
         try {
           await author.save();
         } catch (error) {
@@ -67,11 +64,13 @@ const resolvers = {
       const book = new Book({
         title: args.title,
         published: args.published,
-        author: author,
+        author: author._id,
         genres: args.genres,
       });
       try {
         await book.save();
+        author.bookCount = author.bookCount + 1
+        await author.save()
       } catch (error) {
         throw new GraphQLError("Saving book failed", {
           extensions: {
@@ -81,6 +80,7 @@ const resolvers = {
           },
         });
       }
+      await book.populate('author')
       pubsub.publish("BOOK_ADDED", { bookAdded: book });
       return book;
     },
