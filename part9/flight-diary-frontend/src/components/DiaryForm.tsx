@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { NewDiaryEntry, Visibility, Weather } from "../types"
 import { parseNewDiaryEntry } from "../utils"
+import RadioGroup from "./RadioGroup"
 
 interface DiaryFormProps {
     addDiary: (diary: NewDiaryEntry) => void,
@@ -39,27 +40,16 @@ const DiaryForm = ({ addDiary, message }: DiaryFormProps) => {
                 value={date}
                 onChange={({ target }) => setDate(target.value)}/>
             </label><br/>
-            <label>
-                weather:{' '}
-                <select value={weather}
-                onChange={({ target }) => setWeather(target.value)}>
-                    {weatherOptions.map(w => 
-                        <option key={w} value={w}>
-                            {w}
-                        </option>
-                    )}
-                </select>
-            </label><br/>
-            <label>
-                visibility:{' '}
-                <select value={visibility} onChange={({ target }) => setVisibility(target.value)}>
-                    {visibilityOptions.map(v => 
-                        <option key={v} value={v}>
-                            {v}
-                        </option>
-                    )}
-                </select>
-            </label><br/>
+            <RadioGroup 
+                name="weather" 
+                options={weatherOptions} 
+                value={weather}
+                setValue={setWeather}/>
+            <RadioGroup 
+                name="visibility"
+                options={visibilityOptions}
+                value={visibility}
+                setValue={setVisibility}/>
             <label>
                 comment:<br/>
                 <textarea
