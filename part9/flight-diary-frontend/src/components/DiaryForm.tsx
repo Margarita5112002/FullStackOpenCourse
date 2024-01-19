@@ -3,10 +3,11 @@ import { NewDiaryEntry, Visibility, Weather } from "../types"
 import { parseNewDiaryEntry } from "../utils"
 
 interface DiaryFormProps {
-    addDiary: (diary: NewDiaryEntry) => void
+    addDiary: (diary: NewDiaryEntry) => void,
+    message: string | undefined
 }
 
-const DiaryForm = ({ addDiary }: DiaryFormProps) => {
+const DiaryForm = ({ addDiary, message }: DiaryFormProps) => {
     const weatherOptions = Object.values(Weather).map(w => 
         w.toString()
     )
@@ -29,6 +30,7 @@ const DiaryForm = ({ addDiary }: DiaryFormProps) => {
 
     return <>
         <h1>Add new entry</h1>
+        {message && <div style={{color: "red"}}>{message}</div>}
         <form onSubmit={handleSubmit}>
             <label>
                 date:{' '}

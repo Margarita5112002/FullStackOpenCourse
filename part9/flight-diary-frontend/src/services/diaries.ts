@@ -15,14 +15,16 @@ const getAll = async () => {
     }
 }
 
-const add = async (diary: NewDiaryEntry): Promise<DiaryEntry | undefined> => {
+const add = async (diary: NewDiaryEntry): Promise<DiaryEntry | string | undefined> => {
     try {
         const addedDiary = await axios.post<DiaryEntry>(baseUrl, diary)
         return addedDiary.data
     } catch (error: unknown) {
         console.error('Something wrong happen when adding new diary')
-        if (error instanceof Error) {
-            console.error(error.message)
+        if (axios.isAxiosError(error)) {
+            return error.response?.data
+        } else if (error instanceof Error) {
+            console.error('error not from axios', error.message)
         }
     }
 }
