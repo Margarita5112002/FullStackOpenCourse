@@ -80,3 +80,12 @@ This repository contains my submissions to the Full Stack Open Course.
 - Fragments and subscriptions
 
 [View exercises folder](/part8/)
+
+## [Part 9: Typescript](https://fullstackopen.com/en/part9)
+- Background and introduction
+- First steps with TypeScript
+- Typing an Express app
+- React with types
+- Grande finale: Patientor
+
+[View exercises folder](/part9/)
