@@ -3,20 +3,20 @@ import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Entry, Gender, Patient } from "../../types";
+import { Diagnosis, Entry, Gender, Patient } from "../../types";
 import patientService from "../../services/patients";
 
-const DisplayEntry = ({ entry }: { entry: Entry }) => {
+const DisplayEntry = ({ entry, diagnoses }: { entry: Entry, diagnoses: Diagnosis[] }) => {
     return <div>
         {entry.date} <i>{entry.description}</i>
         <ul>
             {entry.diagnosisCodes?.map(code =>
-                <li key={code}>{code}</li>)}
+                <li key={code}>{code}: {diagnoses.find(d => d.code === code)?.name}</li>)}
         </ul>
     </div>;
 };
 
-const PatientPage = () => {
+const PatientPage = ({ diagnoses }: { diagnoses: Diagnosis[] }) => {
     const id = useParams().id;
     const [patient, setPatient] = useState<Patient | undefined>();
 
@@ -44,7 +44,7 @@ const PatientPage = () => {
             <div>occupation: {patient.occupation}</div>
             <h3>entries</h3>
             {patient.entries?.map(e => 
-                <DisplayEntry key={e.id} entry={e}/>)}
+                <DisplayEntry key={e.id} entry={e} diagnoses={diagnoses}/>)}
         </div>
     );
 };
