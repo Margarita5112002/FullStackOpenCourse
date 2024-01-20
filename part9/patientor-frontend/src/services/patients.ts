@@ -20,7 +20,18 @@ const create = async (object: PatientFormValues) => {
   return data;
 };
 
-export default {
-  getAll, create
+const getById = async (id: string) => {
+    try {
+        const { data } = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
+        return data;
+    } catch(error: unknown) {
+        console.error(`something went wrong fetching patient with ${id} id`);
+        if (axios.isAxiosError(error)) {
+            console.error(error.message);
+        }
+    }
 };
 
+export default {
+  getAll, create, getById
+};
