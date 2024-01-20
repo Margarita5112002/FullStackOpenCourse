@@ -8,6 +8,10 @@ const getPatients = () : NonSensitivePatient[] => {
     }));
 };
 
+const getPatientById = (id: string): Patient | undefined => {
+    return data.find(p => p.id === id);
+};
+
 const addPatient = (obj: NewPatient): Patient => {
     const newPatient = {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
@@ -20,5 +24,6 @@ const addPatient = (obj: NewPatient): Patient => {
 
 export default {
     getPatients,
-    addPatient
+    addPatient,
+    getPatientById
 };
